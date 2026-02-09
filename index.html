@@ -2,153 +2,294 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZeroHack</title>
   <style>
+    /* Global Styles */
+    :root {
+      --glow-color: #00ff41;
+      --bg-color: #0a0a0a;
+      --accent-red: #ff3e3e;
+    }
+
     body {
-      background-color: #000;
-      color: lime;
+      background-color: var(--bg-color);
+      color: var(--glow-color);
       font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Matrix Background Canvas */
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.15;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
       padding: 20px;
+      border: 1px solid var(--glow-color);
+      background: rgba(0, 0, 0, 0.85);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
     }
-    h1, h2 {
+
+    /* Headers */
+    h1 {
       text-align: center;
-      color: lime;
-      border-bottom: 2px solid lime;
-      padding-bottom: 5px;
+      text-transform: ;
+      letter-spacing: 10px;
+      border-bottom: 2px solid var(--glow-color);
+      padding-bottom: 10px;
+      text-shadow: 0 0 10px var(--glow-color);
+      font-size: 2.5rem;
+    }
+
+    h2 {
+      border-left: 5px solid var(--glow-color);
+      padding-left: 10px;
+      background: rgba(0, 255, 65, 0.1);
       margin-top: 40px;
+      font-size: 1.2rem;
+      text-transform: ;
     }
-    ul, ol {
-      margin-left: 40px;
-    }
-    a {
-      color: red;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
+
     p {
       line-height: 1.6;
       text-align: center;
     }
-    .diagram {
-      text-align: left;
-      margin-left: 10%;
-      margin-right: 10%;
-      background-color: #111;
-      padding: 20px;
-      border: 1px solid lime;
-      border-radius: 10px;
+
+    /* List & Components */
+    ul, ol {
+      list-style: none;
+      padding-left: 5px;
     }
-    center {
-      margin-top: 40px;
-      border-top: 1px solid lime;
-      padding-top: 20px;
+
+    li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    li::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      color: var(--glow-color);
+      font-weight: bold;
+    }
+
+    strong {
+      color: #fff;
+      text-shadow: 0 0 5px var(--glow-color);
+    }
+
+    /* Diagram Box */
+    .diagram {
+      background-color: #000;
+      padding: 15px;
+      border: 1px dashed var(--glow-color);
+      font-size: 13px;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 20px 0;
+      line-height: 1.2;
+      color: #00ff41;
+    }
+
+    /* Download Links / Buttons */
+    .download-section {
+      text-align: center;
+      margin-top: 50px;
+      border-top: 1px solid var(--glow-color);
+      padding-top: 30px;
+    }
+
+    a {
+      color: var(--accent-red);
+      text-decoration: none;
+      font-weight: bold;
+      border: 1px solid var(--accent-red);
+      padding: 10px 20px;
+      display: inline-block;
+      margin: 10px;
+      transition: 0.3s;
+      text-transform: ;
+    }
+
+    a:hover {
+      background: var(--accent-red);
+      color: #000;
+      box-shadow: 0 0 15px var(--accent-red);
+    }
+
+    .copyright {
+      font-size: 0.9rem;
+      margin-top: 30px;
+      opacity: 0.8;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      h1 { font-size: 1.8rem; letter-spacing: 5px; }
+      .container { padding: 15px; width: 95%; margin: 10px auto; }
+      .diagram { font-size: 11px; }
     }
   </style>
 </head>
 <body>
-  <h1>ZeroHack</h1>
-  <p>All in One Hacking System Like Flipper Zero</p>
 
-  <h2>Required Components</h2>
-  <ul>
-    <li><strong>ESP32 Dev Board</strong> (e.g., ESP32-WROOM-32 or ESP32-WROVER)</li>
-    <li><strong>IR LED</strong> (for IR Blaster)</li>
-    <li><strong>433MHz RF Transmitter & Receiver</strong></li>
-    <li><strong>NFC Module</strong> (e.g., PN532 via I2C/SPI)</li>
-    <li><strong>Wi-Fi Module</strong> (built-in in ESP32)</li>
-    <li><strong>Bluetooth LE</strong> (built-in in ESP32)</li>
-    <li><strong>125kHz RFID Module</strong> (e.g., RFID-RC522)</li>
-    <li><strong>iButton Reader Module</strong></li>
-    <li><strong>SubGHz Transceiver</strong> (e.g., CC1101)</li>
-    <li><strong>GPIO Pins / Breadboard / Jumper wires</strong></li>
-    <li><strong>USB OTG Cable</strong> (for power + serial communication)</li>
-    <li><strong>Battery or USB power supply</strong></li>
-  </ul>
+  <canvas id="matrix"></canvas>
 
-  <h2>Wiring Diagram Summary</h2>
-  <ul>
-    <li><strong>IR LED</strong> — GPIO 23 (with 220Ω resistor)</li>
-    <li><strong>RF 433 MHz TX</strong> — GPIO 17</li>
-    <li><strong>RF 433 MHz RX</strong> — GPIO 16</li>
-    <li><strong>NFC Module (PN532)</strong> — I2C: GPIO 21 (SDA), GPIO 22 (SCL)</li>
-    <li><strong>RFID-RC522</strong> — SPI: MOSI (GPIO 23), MISO (GPIO 19), SCK (GPIO 18), SDA (GPIO 5)</li>
-    <li><strong>SubGHz CC1101</strong> — SPI: MOSI (GPIO 23), MISO (GPIO 19), SCK (GPIO 18), CSN (GPIO 15)</li>
-    <li><strong>iButton Module</strong> — GPIO 13</li>
-  </ul>
+  <div class="container">
+    <header>
+      <h1>ZeroHack</h1>
+      <p>All in One Hacking System Like Flipper Zero</p>
+    </header>
 
-  <h2>Power Supply & Communication</h2>
-  <ul>
-    <li>ESP32 powered via USB OTG from the Android app (ZeroHack)</li>
-    <li>Communication: USB Serial, Bluetooth, or WiFi (TCP Socket or HTTP)</li>
-  </ul>
+    <h2>Required Components</h2>
+    <ul>
+      <li><strong>ESP32 Dev Board</strong> (e.g., ESP32-WROOM-32 or ESP32-WROVER)</li>
+      <li><strong>IR LED</strong> (for IR Blaster)</li>
+      <li><strong>433MHz RF Transmitter & Receiver</strong></li>
+      <li><strong>NFC Module</strong> (e.g., PN532 via I2C/SPI)</li>
+      <li><strong>Wi-Fi Module</strong> (built-in in ESP32)</li>
+      <li><strong>Bluetooth LE</strong> (built-in in ESP32)</li>
+      <li><strong>125kHz RFID Module</strong> (e.g., RFID-RC522)</li>
+      <li><strong>iButton Reader Module</strong></li>
+      <li><strong>SubGHz Transceiver</strong> (e.g., CC1101)</li>
+      <li><strong>GPIO Pins / Breadboard / Jumper wires</strong></li>
+      <li><strong>USB OTG Cable</strong> (for power + serial communication)</li>
+      <li><strong>Battery or USB power supply</strong></li>
+    </ul>
 
-  <h2>Android App (ZeroHack) Modules</h2>
-  <ul>
-    <li>IR Blast</li>
-    <li>RF Send</li>
-    <li>NFC Ping</li>
-    <li>WiFi Jam & Deauth</li>
-    <li>GPIO Control</li>
-    <li>BadUSB Emulation</li>
-    <li>RFID Emulation</li>
-    <li>iButton Emulation</li>
-    <li>SubGHz Scan</li>
-    <li>Signal Replay</li>
-    <li>Bluetooth Exploit</li>
-    <li>UART Hacking</li>
-    <li>Logic Analyzer</li>
-  </ul>
+    <h2>Wiring Diagram Summary</h2>
+    <ul>
+      <li><strong>IR LED</strong> — GPIO 23 (with 220Ω resistor)</li>
+      <li><strong>RF 433 MHz TX</strong> — GPIO 17</li>
+      <li><strong>RF 433 MHz RX</strong> — GPIO 16</li>
+      <li><strong>NFC Module (PN532)</strong> — I2C: GPIO 21 (SDA), GPIO 22 (SCL)</li>
+      <li><strong>RFID-RC522</strong> — SPI: MOSI (GPIO 23), MISO (GPIO 19), SCK (GPIO 18), SDA (GPIO 5)</li>
+      <li><strong>SubGHz CC1101</strong> — SPI: MOSI (GPIO 23), MISO (GPIO 19), SCK (GPIO 18), CSN (GPIO 15)</li>
+      <li><strong>iButton Module</strong> — GPIO 13</li>
+    </ul>
 
-  <h2>Firmware Flashing</h2>
-  <ol>
-    <li>Use PlatformIO or Arduino IDE</li>
-    <li>Select ESP32 Dev Board</li>
-    <li>Upload custom firmware (.ino or .bin) for each module</li>
-    <li>Configure UART or BLE/WiFi communication for mobile control</li>
-  </ol>
+    <h2>Power Supply & Communication</h2>
+    <ul>
+      <li>ESP32 powered via USB OTG from the Android app (ZeroHack)</li>
+      <li>Communication: USB Serial, Bluetooth, or WiFi (TCP Socket or HTTP)</li>
+    </ul>
 
-  <h2>ESP32 Components Connection</h2>
-  <div class="diagram">
-    [ESP32 BOARD]<br>
-    |-- GPIO 17 ------> IR Transmitter (OUT)<br>
-    |-- GPIO 16 ------> RF Transmitter (DATA)<br>
-    |-- GPIO 15 <------ RF Receiver (DATA)<br>
-    |-- GPIO 21 <--> NFC Module (SDA)<br>
-    |-- GPIO 22 ------> NFC Module (SCL)<br>
-    |-- GPIO 23 ------> CC1101 SubGHz (SI)<br>
-    |-- GPIO 19 <------ CC1101 SubGHz (SO)<br>
-    |-- GPIO 18 ------> CC1101 SubGHz (SCK)<br>
-    |-- GPIO 5  ------> CC1101 SubGHz (CSN)<br>
-    |-- GPIO 13 ------> RFID Module (SDA)<br>
-    |-- GPIO 12 ------> iButton Probe<br>
-    |-- GPIO 25 <--> UART TX<br>
-    |-- GPIO 26 <--> UART RX<br>
-    |-- GPIO 32 ------> WiFi Jammer Antenna<br>
-    |-- GPIO 33 ------> Bluetooth Module (for external amp/hack)<br>
-    |-- GPIOs 2, 4, 27 --> General GPIO Control (Relays, LEDs, etc.)<br>
-    GND -------------> All Modules' GND<br>
-    3V3 or 5V -------> VCC depending on module requirement
+    <h2>Android App (ZeroHack) Modules</h2>
+    <ul>
+      <li>IR Blast</li>
+      <li>RF Send</li>
+      <li>NFC Ping</li>
+      <li>WiFi Jam & Deauth</li>
+      <li>GPIO Control</li>
+      <li>BadUSB Emulation</li>
+      <li>RFID Emulation</li>
+      <li>iButton Emulation</li>
+      <li>SubGHz Scan</li>
+      <li>Signal Replay</li>
+      <li>Bluetooth Exploit</li>
+      <li>UART Hacking</li>
+      <li>Logic Analyzer</li>
+    </ul>
+
+    <h2>Firmware Flashing</h2>
+    <ol>
+      <li>Use PlatformIO or Arduino IDE</li>
+      <li>Select ESP32 Dev Board</li>
+      <li>Upload custom firmware (.ino or .bin) for each module</li>
+      <li>Configure UART or BLE/WiFi communication for mobile control</li>
+    </ol>
+
+    <h2>ESP32 Components Connection</h2>
+    <div class="diagram">
+[ESP32 BOARD]
+|-- GPIO 17 ------> IR Transmitter (OUT)
+|-- GPIO 16 ------> RF Transmitter (DATA)
+|-- GPIO 15 <------ RF Receiver (DATA)
+|-- GPIO 21 <--> NFC Module (SDA)
+|-- GPIO 22 ------> NFC Module (SCL)
+|-- GPIO 23 ------> CC1101 SubGHz (SI)
+|-- GPIO 19 <------ CC1101 SubGHz (SO)
+|-- GPIO 18 ------> CC1101 SubGHz (SCK)
+|-- GPIO 5  ------> CC1101 SubGHz (CSN)
+|-- GPIO 13 ------> RFID Module (SDA)
+|-- GPIO 12 ------> iButton Probe
+|-- GPIO 25 <--> UART TX
+|-- GPIO 26 <--> UART RX
+|-- GPIO 32 ------> WiFi Jammer Antenna
+|-- GPIO 33 ------> Bluetooth Module (for external amp/hack)
+|-- GPIOs 2, 4, 27 --> General GPIO Control (Relays, LEDs, etc.)
+GND -------------> All Modules' GND
+3V3 or 5V -------> VCC depending on module requirement
+    </div>
+
+    <h2>Future Expandability</h2>
+    <ul>
+      <li>Modular firmware system for additional hacking tools</li>
+      <li>OTA updates via ZeroHack App</li>
+      <li>Expandable Bluetooth device scanner/sniffer</li>
+      <li>File-based scripting system (BadUSB, replay scripts)</li>
+    </ul>
+
+    <div class="download-section">
+      <p>ZeroHack Application Source Code</p>
+      <a href="./ZeroHackFullAppSourecCode.zip">Download Zip</a>
+      
+      <p style="margin-top:20px;">ZeroHack Firmware Source Code</p>
+      <a href="ZeroHackFirmware.zip">Download Zip</a>
+
+      <div class="copyright">
+        <h2>CopyRight</h2>
+        <p>Humayun Shahriar Himu</p>
+      </div>
+    </div>
   </div>
 
-  <h2>Future Expandability</h2>
-  <ul>
-    <li>Modular firmware system for additional hacking tools</li>
-    <li>OTA updates via ZeroHack App</li>
-    <li>Expandable Bluetooth device scanner/sniffer</li>
-    <li>File-based scripting system (BadUSB, replay scripts)</li>
-  </ul>
+  <script>
+    // Matrix Animation Script
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
 
-  <center>
-    <p>ZeroHack Application Source Code</p>
-    <a href="./ZeroHackFullAppSourecCode.zip">Download Zip</a><br><br>
-    <p>ZeroHack Firmware Source Code</p>
-    <a href="ZeroHackFirmware.zip">Download Zip</a>
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
-    <h2>CopyRight</h2>
-    <p>Humayun Shahriar Himu</p>
-  </center>
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%'\"#&_(),.;:?!\\|{}<>[]^~";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff41";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 33);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
-</html> 
+</html>
