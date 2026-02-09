@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZeroHack</title>
+  <title>ZeroHack - Terminal Interface</title>
   <style>
     /* Global Styles */
     :root {
       --glow-color: #00ff41;
       --bg-color: #0a0a0a;
       --accent-red: #ff3e3e;
+      --terminal-bg: rgba(0, 15, 0, 0.9);
     }
 
     body {
@@ -19,6 +20,7 @@
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      word-wrap: break-word;
     }
 
     /* Matrix Background Canvas */
@@ -32,10 +34,10 @@
 
     .container {
       max-width: 900px;
-      margin: 20px auto;
-      padding: 20px;
+      margin: 10px auto;
+      padding: 15px;
       border: 1px solid var(--glow-color);
-      background: rgba(0, 0, 0, 0.85);
+      background: var(--terminal-bg);
       box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
     }
 
@@ -43,45 +45,50 @@
     h1 {
       text-align: center;
       text-transform: ;
-      letter-spacing: 10px;
+      letter-spacing: 5px;
       border-bottom: 2px solid var(--glow-color);
       padding-bottom: 10px;
       text-shadow: 0 0 10px var(--glow-color);
-      font-size: 2.5rem;
+      font-size: clamp(1.5rem, 8vw, 2.5rem);
     }
 
     h2 {
       border-left: 5px solid var(--glow-color);
       padding-left: 10px;
       background: rgba(0, 255, 65, 0.1);
-      margin-top: 40px;
-      font-size: 1.2rem;
+      margin-top: 30px;
+      font-size: clamp(1rem, 5vw, 1.3rem);
       text-transform: ;
+      text-align: left;
     }
 
     p {
       line-height: 1.6;
       text-align: center;
+      font-size: 0.95rem;
     }
 
     /* List & Components */
     ul, ol {
       list-style: none;
-      padding-left: 5px;
+      padding-left: 0;
     }
 
     li {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       position: relative;
-      padding-left: 20px;
+      padding-left: 25px;
+      text-align: left;
+      font-size: 0.9rem;
     }
 
     li::before {
-      content: ">";
+      content: ">>";
       position: absolute;
       left: 0;
       color: var(--glow-color);
       font-weight: bold;
+      opacity: 0.7;
     }
 
     strong {
@@ -94,20 +101,49 @@
       background-color: #000;
       padding: 15px;
       border: 1px dashed var(--glow-color);
-      font-size: 13px;
+      font-size: clamp(10px, 3vw, 13px);
       overflow-x: auto;
       white-space: pre;
       margin: 20px 0;
-      line-height: 1.2;
+      line-height: 1.4;
       color: #00ff41;
+      scrollbar-width: thin;
+      scrollbar-color: var(--glow-color) #000;
+    }
+
+    /* Image Container */
+    .img-container {
+      width: 100%;
+      max-width: 100%;
+      margin: 20px auto;
+      padding: 5px;
+      border: 1px dashed var(--glow-color);
+      background: rgba(0, 0, 0, 0.5);
+      box-sizing: border-box;
+    }
+
+    .responsive-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 3px;
+      filter: brightness(0.9) contrast(1.1);
     }
 
     /* Download Links / Buttons */
     .download-section {
       text-align: center;
-      margin-top: 50px;
+      margin-top: 40px;
       border-top: 1px solid var(--glow-color);
-      padding-top: 30px;
+      padding-top: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-top: 20px;
     }
 
     a {
@@ -115,11 +151,12 @@
       text-decoration: none;
       font-weight: bold;
       border: 1px solid var(--accent-red);
-      padding: 10px 20px;
-      display: inline-block;
-      margin: 10px;
+      padding: 12px 25px;
+      width: 80%;
+      max-width: 300px;
       transition: 0.3s;
       text-transform: ;
+      letter-spacing: 1px;
     }
 
     a:hover {
@@ -129,17 +166,15 @@
     }
 
     .copyright {
-      font-size: 0.9rem;
-      margin-top: 30px;
-      opacity: 0.8;
+      margin-top: 40px;
+      padding-bottom: 10px;
     }
 
-    /* Mobile Responsiveness */
-    @media (max-width: 600px) {
-      body { padding: 10px; }
-      h1 { font-size: 1.8rem; letter-spacing: 5px; }
-      .container { padding: 15px; width: 95%; margin: 10px auto; }
-      .diagram { font-size: 11px; }
+    /* Large Screen Adjustments */
+    @media (min-width: 768px) {
+      .container { padding: 30px; margin: 30px auto; }
+      .btn-group { flex-direction: row; justify-content: center; }
+      li { font-size: 1rem; }
     }
   </style>
 </head>
@@ -234,6 +269,11 @@ GND -------------> All Modules' GND
 3V3 or 5V -------> VCC depending on module requirement
     </div>
 
+    <div class="img-container">
+      <h2>Circuit Diagram</h2> 
+      <img src="./image.jpg" alt="ZeroHack Circuit Diagram" class="responsive-img">
+    </div>
+
     <h2>Future Expandability</h2>
     <ul>
       <li>Modular firmware system for additional hacking tools</li>
@@ -243,11 +283,16 @@ GND -------------> All Modules' GND
     </ul>
 
     <div class="download-section">
-      <p>ZeroHack Application Source Code</p>
-      <a href="./ZeroHackFullAppSourecCode.zip">Download Zip</a>
-      
-      <p style="margin-top:20px;">ZeroHack Firmware Source Code</p>
-      <a href="ZeroHackFirmware.zip">Download Zip</a>
+      <div class="btn-group">
+        <div>
+          <p>Application Source</p>
+          <a href="./ZeroHackFullAppSourecCode.zip">Download Zip</a>
+        </div>
+        <div>
+          <p>Firmware Source</p>
+          <a href="ZeroHackFirmware.zip">Download Zip</a>
+        </div>
+      </div>
 
       <div class="copyright">
         <h2>CopyRight</h2>
@@ -257,16 +302,18 @@ GND -------------> All Modules' GND
   </div>
 
   <script>
-    // Matrix Animation Script
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
 
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    function resizeCanvas() {
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    }
+    resizeCanvas();
 
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%'\"#&_(),.;:?!\\|{}<>[]^~";
+    const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const fontSize = 14;
-    const columns = canvas.width / fontSize;
+    let columns = canvas.width / fontSize;
     const drops = [];
 
     for (let x = 0; x < columns; x++) drops[x] = 1;
@@ -284,11 +331,12 @@ GND -------------> All Modules' GND
         drops[i]++;
       }
     }
-    setInterval(draw, 33);
+    setInterval(draw, 35);
 
     window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      resizeCanvas();
+      columns = canvas.width / fontSize;
+      for (let x = 0; x < columns; x++) drops[x] = 1;
     });
   </script>
 </body>
